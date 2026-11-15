@@ -2,24 +2,27 @@
 
 ## Pregled
 
-| Oznaka | Funkcionalnost | Vloga | MVP |
-|---|---|---|---|
-| US-01 | F-01 Prijava in dostop glede na vlogo | vse vloge | **MVP** |
-| US-02 | F-02 Seznam tur in napredek | Disponent | **MVP** |
-| US-03 | F-03 Sestavljanje ture | Disponent | **MVP** |
-| US-04 | F-04 Preverjanje kapacitete vozila | Disponent | **MVP** |
-| US-05 | F-05 Razvrščanje postankov in opombe | Disponent | **MVP** |
-| US-06 | F-06 Potrditev ture | Disponent | **MVP** |
-| US-07 | F-07 Izvedba ture na telefonu | Voznik | **MVP** |
-| US-08 | F-08 Iskanje naročila | Disponent | |
-| US-09 | F-09 Nerazporejena naročila po regijah | Disponent |  |
-| US-10 | F-10 Prikaz ture na zemljevidu | Disponent, Voznik |  |
-| US-11 | F-11 Samodejna lokacija postanka na zemljevidu | Disponent |  |
-| US-12 | F-12 Predlog vrstnega reda postankov | Disponent |  |
-| US-13 | F-13 Izkoriščenost vozil | Disponent |  |
-| US-14 | F-14 Upravljanje uporabniških dostopov | Administrator |  |
-| US-15 | F-14 Evidenca vozil | Administrator |  |
-| US-16 | F-15 Pot ture po cestah | Disponent |  |
+| Oznaka | Funkcionalnost | Vloga | MVP | Implementirano |
+|---|---|---|---|---|
+| US-01 | F-01 Prijava in dostop glede na vlogo | vse vloge | **MVP** | da |
+| US-02 | F-02 Seznam tur in napredek | Disponent | **MVP** | da |
+| US-03 | F-03 Sestavljanje ture | Disponent | **MVP** | da |
+| US-04 | F-04 Preverjanje kapacitete vozila | Disponent | **MVP** | da |
+| US-05 | F-05 Razvrščanje postankov in opombe | Disponent | **MVP** | da |
+| US-06 | F-06 Potrditev ture | Disponent | **MVP** | da |
+| US-07 | F-07 Izvedba ture na telefonu | Voznik | **MVP** | da |
+| US-08 | F-08 Iskanje naročila | Disponent | | da |
+| US-09 | F-09 Nerazporejena naročila po regijah | Disponent |  | ne (samo filter regije pri sestavljanju ture) |
+| US-10 | F-10 Prikaz ture na zemljevidu | Disponent, Voznik |  | da |
+| US-11 | F-11 Samodejna lokacija postanka na zemljevidu | Disponent |  | da |
+| US-12 | F-12 Predlog vrstnega reda postankov | Disponent |  | da |
+| US-13 | F-13 Izkoriščenost vozil | Disponent |  | ne |
+| US-14 | F-14 Upravljanje uporabniških dostopov | Administrator |  | delno (Django Admin, brez opozoril) |
+| US-15 | F-14 Evidenca vozil | Administrator |  | delno (Django Admin, brez opozoril) |
+| US-16 | F-15 Pot ture po cestah | Disponent |  | da |
+
+- **Implementirano**: stanje ob koncu MVP, ki se preveri po sprejemnih kriterijih spodaj; testni uporabniki so v [README](../README.md#testni-podatki)
+- **Delno**: osnovno dodajanje in urejanje je mogoče v Django Admin, opozorila iz sprejemnih kriterijev (npr. potrjene ture deaktiviranega voznika ali vozila) niso narejena
 
 ---
 
