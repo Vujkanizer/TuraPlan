@@ -1,6 +1,6 @@
 # TuraPlan
 
-Spletna aplikacija za planiranje dostavnih tur distribucijskega podjetja. Disponent sestavi turo za vozilo, sistem sproti preveri, ali naročila po teži in številu palet gredo v vozilo, disponent določi vrstni red postankov in turo potrdi, voznik pa na telefonu označuje opravljene dostave.
+Spletna aplikacija za planiranje dostavnih tur distribucijskega podjetja. Disponent sestavi turo za vozilo, sistem sproti preveri, ali naročila po teži in številu palet gredo v vozilo, disponent določi vrstni red postankov in turo potrdi, voznik pa označuje opravljene dostave.
 
 ## Uporabljene tehnologije
 
@@ -24,7 +24,7 @@ turaplan/
 
 ## Lokalni zagon
 
-### Z Dockerjem (priporočeno)
+### Z Dockerjem
 
 Potrebna sta [Git](https://git-scm.com/) in nameščen ter zagnan [Docker Desktop](https://www.docker.com/products/docker-desktop/). Vrata 5173 in 8000 morajo biti prosta.
 
@@ -34,6 +34,8 @@ Potrebna sta [Git](https://git-scm.com/) in nameščen ter zagnan [Docker Deskto
    git clone https://github.com/n-varoscic/TuraPlan.git
    cd TuraPlan
    ```
+
+   Če je projekt forkan, se namesto tega naslova uporabi naslov forka (`https://github.com/<uporabnisko-ime>/TuraPlan.git`).
 
 2. Zaženi backend in frontend (prvi zagon traja nekaj minut, ker se namestijo knjižnice; tabele v bazi se ustvarijo samodejno):
 
@@ -81,18 +83,18 @@ npm install
 npm run dev                      # http://localhost:5173
 ```
 
-Nato v mapi `backend` naloži testne podatke z ukazom `python manage.py seed_data` (razdelek [Testni podatki](#testni-podatki)) in se prijavi na http://localhost:5173.
+Testni podatki se nato naložijo v mapi `backend` z ukazom `python manage.py seed_data` (razdelek [Testni podatki](#testni-podatki)), prijava je na http://localhost:5173.
 
 ### Prvi uporabnik
 
-Registracije ni, uporabnike ustvari administrator. Če naložiš testne podatke, ta korak ni potreben, ker so uporabniki vseh vlog že med njimi. Brez testnih podatkov prvega administratorja ustvariš z ukazom:
+Registracije ni, uporabnike ustvari administrator. Če so naloženi testni podatki, ta korak ni potreben, ker so uporabniki vseh vlog že med njimi. Brez testnih podatkov se prvi administrator ustvari z ukazom:
 
 ```bash
 docker compose exec backend python manage.py createsuperuser   # z Dockerjem
 python manage.py createsuperuser                               # brez Dockerja, v mapi backend
 ```
 
-Nato se prijaviš v Django Admin (http://localhost:8000/admin/) in dodaš disponente in voznike.
+Disponenti in vozniki se nato dodajo v Django Admin (http://localhost:8000/admin/).
 
 ### Testni podatki
 
@@ -102,7 +104,7 @@ Kaj je v testnih podatkih:
 
 - **91 strank** v osmih regijah (Podravska, Pomurska, Savinjska, Osrednjeslovenska, Gorenjska, Goriška, Dolenjska, Obalno-kraška); imena so izmišljena, naslovi so resnični, koordinate so že shranjene
 - **100 naročil**: manjša za kombi, večja za tovornjak in nekaj izjemno velikih; nekatere stranke imajo dve naročili
-- **17 vozil** z mariborsko registrsko: 7 kombijev (1.200 kg, 4 paletna mesta) in 10 tovornjakov (8.000–10.000 kg, 16–18 paletnih mest); kombi `MB PR-632` ni aktiven
+- **17 vozil**: 7 kombijev (1.200 kg, 4 paletna mesta) in 10 tovornjakov (8.000–10.000 kg, 16–18 paletnih mest); kombi `MB PR-632` ni aktiven
 - **17 uporabnikov**: 1 disponent, 1 administrator in 15 voznikov
 - **skladišče**: Tržaška cesta 65, 2000 Maribor
 - **4 ture**, vsaka v svoji regiji: včeraj Pomurska (zaključena), danes Podravska (v dostavi), jutri Savinjska (potrjena, tovornjak) in Dolenjska (osnutek)
@@ -114,7 +116,7 @@ python manage.py seed_data                               # brez Dockerja, v mapi
 
 Testni uporabniki (geslo vseh je `turaplan123`):
 
-| E-pošta | Vloga | Kaj lahko preizkusiš |
+| E-pošta | Vloga | Kaj je mogoče preizkusiti |
 |---|---|---|
 | `dejan.zupan@turaplan.si` | Disponent | seznam tur, sestavljanje, potrditev in vrnitev ture v osnutek |
 | `vid.krajnc@turaplan.si` | Voznik | današnja tura v dostavi: označevanje dostav, popravek oznake in zaključek ture |
@@ -122,44 +124,6 @@ Testni uporabniki (geslo vseh je `turaplan123`):
 | `maja.kovac@turaplan.si` | Voznik | včerajšnja zaključena tura |
 | še 12 voznikov, npr. `nejc.potocnik@turaplan.si` | Voznik | brez tur, na voljo pri novi turi (vsi so v `seed_data.py`, seznam `USERS`) |
 | `ana.novak@turaplan.si` | Administrator | Django Admin na http://localhost:8000/admin/ |
-
-### Preizkus zemljevida in iskanja lokacije
-
-Zemljevid ture (skladišče, oštevilčeni postanki in črta po vrstnem redu) je na straneh Sestavljanje ture, Podrobnosti ture in na turi voznika. Koordinate testnih strank so že shranjene, zato zemljevid deluje takoj. Lokacijo nove stranke ali spremenjenega naslova backend poišče pri storitvi Nominatim (OpenStreetMap), ko disponent doda njeno naročilo v turo.
-
-Kako preizkusiš iskanje lokacije:
-
-1. V brskalniku odpri `https://nominatim.openstreetmap.org/search?q=Tržaška+cesta+67,+Maribor&format=json`; v odgovoru vidiš `lat` in `lon`.
-2. V Django Admin (http://localhost:8000/admin/, `ana.novak@turaplan.si`) stranki izbriši koordinati ali spremeni naslov. Nato kot disponent dodaj njeno naročilo v turo: koordinate se shranijo pri stranki, postanek se pojavi na zemljevidu.
-3. Izklopi internet (Wi-Fi) in ponovi korak 2: naročilo se doda, pri postanku piše »Lokacija ni določena«, pod zemljevidom je seznam postankov brez lokacije.
-
-Kako preizkusiš predlog vrstnega reda:
-
-1. Kot disponent odpri jutrišnji osnutek (Dolenjska) in klikni »Uredi turo«.
-2. Klikni »Predlagaj vrstni red«: nad postanki se pokaže predlagani vrstni red z zračno razdaljo (in trenutno razdaljo za primerjavo), zemljevid pokaže predlog.
-3. »Sprejmi predlog« vrstni red shrani, »Zavrzi« ga opusti. Postanke lahko potem še ročno premikaš.
-
-Kako preizkusiš iskanje naročila:
-
-1. Kot disponent na strani Seznam tur v iskalno polje vpiši `N-003` in pritisni Enter: zadetek ima status »Nedostavljeno« in razlog »Stranka zaprta«.
-2. Vpiši `pekarna`: zadetki so vsa naročila strank s tem nazivom; pri planiranih in dostavljenih je povezava na turo z datumom in voznikom.
-3. Vpiši `xy`: prikaže se »Ni najdenih naročil« (za naziv stranke so potrebni vsaj 3 znaki).
-
-Kako preizkusiš pot po cestah:
-
-1. Odpri osnutek na strani Sestavljanje ture: črta na zemljevidu sledi cestam, ob naslovu »Postanki« sta cestna razdalja in čas vožnje.
-2. Premakni postanek: črta, razdalja in čas se čez trenutek posodobijo.
-3. »Predlagaj vrstni red« najbližji postanek izbere po cestni razdalji in pokaže cestno razdaljo predloga in trenutne ture.
-4. Izklopi internet in osveži stran: črta je ravna, piše »km zračne razdalje«, predlog deluje po zračni razdalji.
-
-Kako preizkusiš dodajanje naročil na zemljevidu:
-
-1. Na strani Sestavljanje ture klikni »Povečaj zemljevid«: zemljevid se poveča, seznama naročil in postankov se zožita.
-2. Siva oznaka »+« je nerazporejeno naročilo, rdeča je naročilo po roku odpreme. Zemljevid kaže ista naročila kot seznam, zato nanj vplivata filtra regije in roka odpreme.
-3. Klikni oznako »+« in nato »Dodaj v turo«: naročilo postane zadnji postanek ture.
-4. Klikni oštevilčeno oznako postanka in nato »Odstrani iz ture«: naročilo se vrne med nerazporejena.
-
-Po dodajanju novih knjižnic frontenda (Leaflet) je treba z Dockerjem enkrat pognati `docker compose exec frontend npm install` ali `docker compose up --build`, brez Dockerja pa `npm install` v mapi `frontend`.
 
 ### Testi
 
@@ -170,12 +134,57 @@ docker compose exec backend pytest   # z Dockerjem
 pytest                               # brez Dockerja, v mapi backend
 ```
 
+- Backend ima 124 testov (pytest-django), frontend avtomatskih testov nima
+- Testi uporabljajo začasno bazo in ne spremenijo prave baze
+- Testi ne kličejo zunanjih storitev (Nominatim, OSRM), zato ne potrebujejo interneta; zamenjava je v `backend/tours/tests/conftest.py`
+
+| Datoteka | Testov | Kaj preverja |
+|---|---|---|
+| `users/tests/test_auth.py` | 8 | prijava z JWT, neaktiven uporabnik, dostop do Django Admin (US-01) |
+| `users/tests/test_permissions.py` | 4 | dostop glede na vlogo: 401 brez prijave, 403 pri napačni vlogi (US-01) |
+| `tours/tests/test_models.py` | 9 | palete v četrtinah, eno vozilo na datum, nastavitve, testni podatki |
+| `tours/tests/test_tours_api.py` | 9 | seznam tur, filtri, podrobnosti ture (US-02) |
+| `tours/tests/test_tour_builder_api.py` | 14 | nova tura, nerazporejena naročila, dodajanje in odstranjevanje (US-03) |
+| `tours/tests/test_capacity_api.py` | 8 | preverjanje kapacitete in menjava vozila (US-04) |
+| `tours/tests/test_stop_order_api.py` | 12 | vrstni red postankov in opombe (US-05) |
+| `tours/tests/test_confirm_api.py` | 8 | potrditev ture in vrnitev v osnutek (US-06) |
+| `tours/tests/test_driver_api.py` | 15 | tura voznika, oznake dostav, zaključek (US-07) |
+| `tours/tests/test_order_search_api.py` | 12 | iskanje naročila (US-08) |
+| `tours/tests/test_geocoding.py` | 6 | samodejna lokacija stranke (US-11) |
+| `tours/tests/test_suggested_order_api.py` | 9 | predlog vrstnega reda (US-12) |
+| `tours/tests/test_road_route_api.py` | 10 | pot po cestah, predlog po cestni razdalji, delovanje brez OSRM (US-16) |
+
 Preverjanje kode frontenda:
 
 ```bash
 docker compose exec frontend npm run lint   # z Dockerjem
 npm run lint                                # brez Dockerja, v mapi frontend
 ```
+
+## Okoljske spremenljivke
+
+Nastavitve, ki se razlikujejo med lokalnim razvojem in strežnikom, se preberejo iz okoljskih spremenljivk. Za lokalni zagon ni treba nastaviti ničesar, privzete vrednosti so za razvoj.
+
+| Spremenljivka | Del | Privzeta vrednost | Pomen |
+|---|---|---|---|
+| `DJANGO_SECRET_KEY` | backend | ključ samo za lokalni razvoj | skrivni ključ Djanga (podpis JWT žetonov); na strežniku obvezno svoj, shranjen kot skrivnost |
+| `DJANGO_DEBUG` | backend | `1` | `1` = razvojni način, `0` = produkcija |
+| `DJANGO_ALLOWED_HOSTS` | backend | `localhost,127.0.0.1` | naslovi backenda, ločeni z vejico (npr. `turaplan-api.example.com`); upošteva se samo pri `DJANGO_DEBUG=0` |
+| `DJANGO_CORS_ORIGINS` | backend | `http://localhost:5173,http://127.0.0.1:5173` | naslovi frontenda, ki smejo klicati API, ločeni z vejico, brez `/` na koncu |
+| `DJANGO_DB_PATH` | backend | `backend/db.sqlite3` | pot do datoteke SQLite baze (z Dockerjem `/data/db.sqlite3`) |
+| `VITE_API_URL` | frontend | `http://<naslov strani>:8000/api` | naslov API-ja (npr. `https://turaplan-api.example.com/api`); nastavi se že pri `npm run build` |
+
+## Opombe za namestitev na strežnik
+
+Projekt je zaenkrat pripravljen za lokalni zagon. Pri namestitvi na strežnik je treba upoštevati:
+
+- `DJANGO_DEBUG` je privzeto `1`, zato mora biti na strežniku nastavljen na `0`; sicer so podrobnosti napak vidne vsem in backend sprejme zahteve za kateri koli naslov
+- `python manage.py runserver` (tudi v `backend/Dockerfile`) je samo za razvoj; na strežniku je potreben produkcijski strežnik, npr. gunicorn, ki še ni v `requirements.txt`
+- Pri `DJANGO_DEBUG=0` Django ne streže statičnih datotek, zato je Django Admin brez oblikovanja, dokler to ni urejeno (npr. `collectstatic` in whitenoise)
+- SQLite baza je ena datoteka: na storitvi brez trajnega diska se ob vsaki namestitvi izbriše, zato je ob zagonu treba pognati `python manage.py migrate` in po potrebi `python manage.py seed_data`; pri trajnem disku se pot do baze nastavi z `DJANGO_DB_PATH`
+- `seed_data` izbriše obstoječe ture, naročila, stranke in vozila, zato ni primeren za vsak zagon, če baza ostaja ohranjena
+- Frontend je po `npm run build` navadna statična stran v mapi `frontend/dist/`; ker poti ureja React Router, mora gostovanje vse poti (npr. `/tours/5`) preusmeriti na `index.html`, sicer osvežitev podstrani vrne 404
+- `DJANGO_CORS_ORIGINS` mora vsebovati točen naslov nameščenega frontenda (z `https://`), `VITE_API_URL` pa naslov nameščenega backenda s `/api` na koncu
 
 ## Dokumentacija
 
