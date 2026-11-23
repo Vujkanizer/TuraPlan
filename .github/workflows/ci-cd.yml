@@ -1,0 +1,23 @@
+name: CI/CD
+
+# Začetni workflow: sproži se ob pull requestu v main in ob pushu na main.
+# Lint, testi, gradnja in namestitev pridejo v naslednjih korakih.
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+jobs:
+  priprava:
+    name: Priprava
+    runs-on: ubuntu-latest
+    steps:
+      - name: Prenos kode
+        uses: actions/checkout@v4
+
+      - name: Preverjanje sprožilca
+        run: echo "Workflow se je sprožil ob dogodku ${{ github.event_name }}."
