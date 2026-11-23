@@ -3,7 +3,10 @@ from datetime import timedelta
 from django.utils import timezone
 
 from tours.management.commands.seed_data import (
-    DISPATCHER_EMAIL, DRIVER_LUKA_EMAIL, DRIVER_MAJA_EMAIL, DRIVER_VID_EMAIL,
+    DISPATCHER_EMAIL,
+    DRIVER_LUKA_EMAIL,
+    DRIVER_MAJA_EMAIL,
+    DRIVER_VID_EMAIL,
 )
 from tours.models import Order, Stop, Tour, Vehicle
 from users.models import User

@@ -9,14 +9,35 @@ from users.serializers import UserSerializer
 
 from .models import Order, Stop, Tour, Vehicle
 from .serializers import (
-    OrderSearchSerializer, OrderSerializer, StopSerializer, TourCreateSerializer, TourDetailSerializer, TourListSerializer,
+    OrderSearchSerializer,
+    OrderSerializer,
+    StopSerializer,
+    TourCreateSerializer,
+    TourDetailSerializer,
+    TourListSerializer,
     VehicleSerializer,
 )
 from .services import (
-    add_stop, apply_suggested_order, available_drivers, available_vehicles, change_vehicle,
-    complete_tour, confirm_tour, driver_tours, mark_stop, move_stop, move_stop_to, remove_stop,
-    road_route, search_orders, start_tour, suggested_order_preview, unassigned_orders, unconfirm_tour,
-    update_customer_delivery_note, update_driver_note,
+    add_stop,
+    apply_suggested_order,
+    available_drivers,
+    available_vehicles,
+    change_vehicle,
+    complete_tour,
+    confirm_tour,
+    driver_tours,
+    mark_stop,
+    move_stop,
+    move_stop_to,
+    remove_stop,
+    road_route,
+    search_orders,
+    start_tour,
+    suggested_order_preview,
+    unassigned_orders,
+    unconfirm_tour,
+    update_customer_delivery_note,
+    update_driver_note,
 )
 
 

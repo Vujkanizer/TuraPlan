@@ -4,8 +4,16 @@ from users.serializers import UserSerializer
 
 from .models import Order, Settings, Stop, Tour, Vehicle
 from .services import (
-    complete_errors, confirmation_errors, delivery_progress, not_delivered_reason, order_tour,
-    route_distance_km, split_customers, start_errors, tour_creation_errors, tour_load,
+    complete_errors,
+    confirmation_errors,
+    delivery_progress,
+    not_delivered_reason,
+    order_tour,
+    route_distance_km,
+    split_customers,
+    start_errors,
+    tour_creation_errors,
+    tour_load,
 )
 
 
