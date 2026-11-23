@@ -12,3 +12,10 @@ __pycache__/
 # Frontend (React / Vite)
 node_modules/
 dist/
+
+# Poročila o pokritosti in paket backenda iz cevovoda
+.coverage
+coverage.xml
+coverage/
+htmlcov/
+backend/build/

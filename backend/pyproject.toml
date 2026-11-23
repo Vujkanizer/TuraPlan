@@ -1,0 +1,16 @@
+[tool.ruff]
+target-version = "py312"
+line-length = 120
+extend-exclude = ["migrations"]
+
+[tool.ruff.lint]
+# E, W: slog (pycodestyle), F: napake (pyflakes), I: vrstni red uvozov.
+select = ["E", "F", "W", "I"]
+ignore = [
+    # Obstoječe vrstice in komentarji so daljši od omejitve. Dolžina vrstice ni napaka kakovosti, ki bi ustavila cevovod.
+    "E501",
+]
+
+[tool.ruff.lint.per-file-ignores]
+# Testne funkcije prejmejo fixture kot argument z enakim imenom, kot je uvožen fixture. To ni podvojena definicija.
+"**/tests/**/*.py" = ["F811"]

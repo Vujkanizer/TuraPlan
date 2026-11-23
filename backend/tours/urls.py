@@ -1,9 +1,22 @@
 from django.urls import path
 
 from .views import (
-    MyTourListView, OrderListView, OrderSearchView, StopDeliveryNoteView, StopDetailView, StopMoveView,
-    StopResultView, TourCompleteView, TourConfirmView, TourDetailView, TourListView,
-    TourOptionsView, TourRouteView, TourStartView, TourStopsView, TourSuggestedOrderView,
+    MyTourListView,
+    OrderListView,
+    OrderSearchView,
+    StopDeliveryNoteView,
+    StopDetailView,
+    StopMoveView,
+    StopResultView,
+    TourCompleteView,
+    TourConfirmView,
+    TourDetailView,
+    TourListView,
+    TourOptionsView,
+    TourRouteView,
+    TourStartView,
+    TourStopsView,
+    TourSuggestedOrderView,
     TourUnconfirmView,
 )
 
