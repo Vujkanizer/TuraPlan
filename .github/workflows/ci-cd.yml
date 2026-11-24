@@ -180,7 +180,7 @@ jobs:
           name: backend-build
           path: backend-build
 
-      # --prebuilt preskoči vite build. Vercel dobi že zgrajene datoteke.
+      # --prebuilt bere samo .vercel/output v trenutni mapi in ne zažene vite build.
       - name: Namestitev frontenda na Vercel
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
@@ -188,12 +188,10 @@ jobs:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
         run: |
           npm install --global vercel
-          mkdir -p /tmp/static
-          cp -a frontend-dist/frontend/. /tmp/static/
-          mkdir -p frontend-dist/frontend/.vercel/output
-          mv /tmp/static frontend-dist/frontend/.vercel/output/static
-          printf '%s\n' '{"version":3,"routes":[{"handle":"filesystem"},{"src":"/(.*)","dest":"/index.html"}]}' > frontend-dist/frontend/.vercel/output/config.json
-          vercel deploy frontend-dist --prebuilt --prod --yes --token "$VERCEL_TOKEN"
+          mkdir -p .vercel/output/static
+          cp -a frontend-dist/frontend/. .vercel/output/static/
+          printf '%s\n' '{"version":3,"routes":[{"handle":"filesystem"},{"src":"/(.*)","dest":"/index.html"}]}' > .vercel/output/config.json
+          vercel deploy --prebuilt --prod --yes --token "$VERCEL_TOKEN"
 
       # Render nima nalaganja zip paketa. Hook namesti isti commit, ki je ustvaril artefakt.
       # V tem jobu ni pip install in ni npm run build.
