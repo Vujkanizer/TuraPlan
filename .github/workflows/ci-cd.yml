@@ -1,7 +1,8 @@
 name: CI/CD
 
 # Cevovod se sproži ob pull requestu v main in ob pushu na main.
-# lint, build in test tečejo vzporedno. Namestitev pride v naslednjem koraku.
+# lint, build in test tečejo vzporedno.
+# deploy teče samo ob pushu na main, in samo če so lint, build in test uspešni.
 
 on:
   pull_request:
@@ -59,11 +60,19 @@ jobs:
           cache: npm
           cache-dependency-path: frontend/package-lock.json
 
+      # VITE_API_URL se vgradi v paket. Deploy frontenda zato ne sme ponovno zagnati vite build.
       - name: Gradnja frontenda
         working-directory: frontend
+        env:
+          VITE_API_URL: ${{ vars.VITE_API_URL }}
         run: |
+          if [ -z "$VITE_API_URL" ]; then
+            VITE_API_URL="https://turaplan.onrender.com/api"
+          fi
+          export VITE_API_URL
           npm ci
           npm run build
+          cp vercel.json dist/vercel.json
 
       - name: Python
         uses: actions/setup-python@v5
@@ -148,3 +157,44 @@ jobs:
             frontend/coverage
             backend/coverage.xml
           if-no-files-found: error
+
+  deploy:
+    name: deploy
+    needs: [lint, build, test]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://tura-plan.vercel.app
+    steps:
+      - name: Artefakt frontenda
+        uses: actions/download-artifact@v4
+        with:
+          name: frontend-dist
+          path: frontend-dist
+
+      - name: Artefakt backenda
+        uses: actions/download-artifact@v4
+        with:
+          name: backend-build
+          path: backend-build
+
+      # Že zgrajen dist. Vite se tukaj ne zažene.
+      - name: Namestitev frontenda na Vercel
+        working-directory: frontend-dist
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          npm install --global vercel
+          vercel deploy --prod --yes --token "$VERCEL_TOKEN"
+
+      # Render nima nalaganja zip paketa. Hook namesti isti commit, ki je ustvaril artefakt.
+      # V tem jobu ni pip install in ni npm run build.
+      - name: Namestitev backenda na Render
+        env:
+          RENDER_DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK }}
+        run: |
+          test -f backend-build/manage.py
+          curl --fail-with-body --silent --show-error --request POST "$RENDER_DEPLOY_HOOK"

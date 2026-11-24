@@ -23,7 +23,13 @@ SECRET_KEY = os.environ.get(
 
 DEBUG = os.environ.get("DJANGO_DEBUG", "1") == "1"
 
-ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
+ALLOWED_HOSTS = [
+    host.strip()
+    for host in os.environ.get(
+        "DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1,turaplan.onrender.com"
+    ).split(",")
+    if host.strip()
+]
 if DEBUG:
     # Pri razvoju je backend dosegljiv tudi z naslova računalnika v lokalnem omrežju (preizkus na telefonu)
     ALLOWED_HOSTS = ["*"]
@@ -114,14 +120,23 @@ STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
-# CORS: naslovi frontenda, s katerih backend sprejema zahteve
-# Vite razvojni strežnik privzeto teče na http://localhost:5173
-CORS_ALLOWED_ORIGINS = os.environ.get(
-    "DJANGO_CORS_ORIGINS", "http://localhost:5173,http://127.0.0.1:5173"
-).split(",")
+# CORS: naslovi frontenda, s katerih backend sprejema zahteve. Brez končne poševnice.
+# Nameščeni frontend je dovoljen v kodi, ne samo prek okoljske spremenljivke.
+_PRODUCTION_FRONTEND = "https://tura-plan.vercel.app"
+CORS_ALLOWED_ORIGINS = [
+    origin.strip().rstrip("/")
+    for origin in os.environ.get(
+        "DJANGO_CORS_ORIGINS",
+        f"http://localhost:5173,http://127.0.0.1:5173,{_PRODUCTION_FRONTEND}",
+    ).split(",")
+    if origin.strip()
+]
+if _PRODUCTION_FRONTEND not in CORS_ALLOWED_ORIGINS:
+    CORS_ALLOWED_ORIGINS.append(_PRODUCTION_FRONTEND)
+# Tudi predogledi na Vercelu (tura-plan-....vercel.app) in telefon v domačem omrežju.
+CORS_ALLOWED_ORIGIN_REGEXES = [r"^https://tura-plan[a-z0-9-]*\.vercel\.app$"]
 if DEBUG:
-    # Frontend, odprt na telefonu prek naslova računalnika v domačem omrežju, npr. http://192.168.1.14:5173
-    CORS_ALLOWED_ORIGIN_REGEXES = [r"^http://(192\.168|10)(\.\d{1,3}){2}:5173$"]
+    CORS_ALLOWED_ORIGIN_REGEXES.append(r"^http://(192\.168|10)(\.\d{1,3}){2}:5173$")
 
 
 # Django REST Framework: vsak API privzeto zahteva prijavo z JWT žetonom
