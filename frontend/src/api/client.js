@@ -1,8 +1,16 @@
 // Vsi klici na backend gredo skozi to datoteko
 
-// Naslov API-ja se lahko nastavi z VITE_API_URL, sicer je backend na istem računalniku kot frontend.
-// Tako aplikacija deluje tudi na telefonu, odprta prek naslova računalnika, npr. http://192.168.1.14:5173
-const API_URL = import.meta.env.VITE_API_URL ?? `http://${window.location.hostname}:8000/api`;
+// Naslov API-ja se nastavi z VITE_API_URL ob gradnji (npr. https://turaplan.onrender.com/api).
+// Brez nastavitve je backend na istem računalniku kot frontend, tudi na telefonu v domačem omrežju.
+function apiUrl() {
+  const configured = (import.meta.env.VITE_API_URL ?? "").trim().replace(/\/$/, "");
+  if (configured) return configured.endsWith("/api") ? configured : `${configured}/api`;
+  // Nameščena stran na Vercelu vedno kliče Render, tudi če ob gradnji ni bilo VITE_API_URL.
+  if (window.location.hostname.endsWith(".vercel.app")) return "https://turaplan.onrender.com/api";
+  return `http://${window.location.hostname}:8000/api`;
+}
+
+const API_URL = apiUrl();
 
 // Django Admin teče na istem strežniku kot API
 export const ADMIN_URL = API_URL.replace(/\/api$/, "/admin/");
