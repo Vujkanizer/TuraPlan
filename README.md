@@ -1,6 +1,23 @@
 # TuraPlan
 
+[![CI/CD](https://github.com/Vujkanizer/TuraPlan/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/Vujkanizer/TuraPlan/actions/workflows/ci-cd.yml)
+
 Spletna aplikacija za planiranje dostavnih tur distribucijskega podjetja. Disponent sestavi turo za vozilo, sistem sproti preveri, ali naročila po teži in številu palet gredo v vozilo, disponent določi vrstni red postankov in turo potrdi, voznik pa označuje opravljene dostave.
+
+Nameščena aplikacija: [https://tura-plan.vercel.app/](https://tura-plan.vercel.app/)
+
+## Cevovod
+
+Ob vsakem pull requestu v `main` in ob vsakem pushu na `main` se zažene [GitHub Actions](.github/workflows/ci-cd.yml). Faze:
+
+| Faza | Kdaj | Kaj naredi |
+|---|---|---|
+| `lint` | pull request in push | oxlint na frontendu in Ruff na backendu. Ob napaki faza pade. |
+| `build` | pull request in push | zgradi frontend (`dist`) in pripravi paket backenda. Odvisnosti so predpomnjene, rezultat je shranjen kot artefakt. |
+| `test` | pull request in push | Vitest in pytest. Poročilo o pokritosti je artefakt. Ob padlem testu pade tudi faza. |
+| `deploy` | samo push na `main`, ko so lint, build in test zeleni | na Vercel postavi že zgrajen frontend, na Render pa sproži namestitev backenda. Aplikacije v tej fazi ne gradi znova. |
+
+Veja `main` zahteva, da so `lint`, `build` in `test` zeleni, preden se pull request lahko združi.
 
 ## Uporabljene tehnologije
 
